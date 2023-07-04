@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Input Table</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+
+        body {
+            background-color: #000;
+            color: #fff;
+            text-shadow: 0px 0px 10px rgba(255, 255, 255, 0.567);
+            display: flex;
+            font-family: 'Montserrat', Arial, sans-serif;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: nowrap;
+        }
+
+        table {
+            border-collapse: collapse;
+            border: 3px solid yellow;
+            width: 100%;
+            box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.243);
+
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid black;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .button {
+            margin-top: 10px;
+            background-color: #ffce00;
+            box-shadow: 0px 0px 15px #ffcc0078;
+            border: none;
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 5px;
+            width: 90%;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .2s ease-in-out;
+        }
+
+        .button:hover {
+            background-color: #ffd866;
+            transform: scale(1.04);
+            border-radius: 10px;
+        }
+
+        .stars-container {
+            margin-top: 4px;
+        }
+
+        .star-row {
+            display: flex;
+            align-items: center;
+        }
+
+        .star {
+            color: #ffce00;
+    
+            margin-right: 4px;
+            font-size: 12px;
+        }
+
+        .stars-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        span {
+            padding: 10px;
+            position: sticky;
+        }
+
+        tr {
+            border: 2px solid #ffce00;
+
+        }
+
+        td {
+            border: 2px solid white;
+        }
+
+        .delete-button {
+            background-color: #ff0000;
+            color: #fff;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        #shortcuts {
+    display: flex;
+    position: absolute;
+    background-color: #131313;
+    top: 10px;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: x-small;
+    right: 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    transition: .2s ease-in-out;
+}
+#shortcuts:hover{
+    transform: scale(1.05);
+}
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <div id="shortcuts">
+        SHORTCUT KEYS
+        <label for="">CTRL + SHIFT = Adds empty row </label>
+        <label for="">CTRL + U = row for 'Upside' </label>
+        <label for="">CTRL + D = row for 'Downside' </label>
+
+    </div>
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <button onclick="addRow()" class="button">Add Row</button>
+
+    <script>
+   // Add Row function
+   function addRow() {
+            var table = document.getElementById("data-table");
+            var newRow = table.insertRow(table.rows.length);
+
+            var dataInput = prompt("Enter the data (use '/' or space as a separator):");
+            var dataArr = dataInput.split(/[\/\s]+/);
+
+            for (var i = 0; i < dataArr.length; i++) {
+                var cell = newRow.insertCell(i);
+                var data = dataArr[i];
+
+                var contentEditableSpan = document.createElement("span");
+                contentEditableSpan.contentEditable = true;
+                contentEditableSpan.innerHTML = data;
+
+                cell.appendChild(contentEditableSpan);
+                updateStars(contentEditableSpan);
+            }
+
+            addDeleteButton(newRow); // Add delete button to the row
+        }
+
+        // Shortcut key handler
+  // Shortcut key handler
+  document.addEventListener("keydown", function(event) {
+             if (event.ctrlKey && event.shiftKey) {
+                event.preventDefault(); // Prevent default browser behavior
+
+                addRow(); // Call the addRow function
+            }
+            if (event.ctrlKey && event.key === "u") {
+                event.preventDefault(); // Prevent default browser behavior
+
+                addSpecificRow("UP: ", "*"); // Call addSpecificRow with "UP: " and "*" as parameters
+            } else if (event.ctrlKey && event.key === "d") {
+                event.preventDefault(); // Prevent default browser behavior
+
+                addSpecificRow("DOWN: ", "*"); // Call addSpecificRow with "DOWN: " and "*" as parameters
+            }
+        });
+
+        // Function to add specific row
+        function addSpecificRow(header, cellData) {
+            var table = document.getElementById("data-table");
+            var newRow = table.insertRow(table.rows.length);
+
+            var headerCell = newRow.insertCell(0);
+            headerCell.innerHTML = header;
+
+            for (var i = 0; i < 5; i++) {
+                var cell = newRow.insertCell(i + 1);
+
+                var contentEditableSpan = document.createElement("span");
+                contentEditableSpan.contentEditable = true;
+                contentEditableSpan.innerHTML = cellData;
+
+                cell.appendChild(contentEditableSpan);
+                updateStars(contentEditableSpan);
+            }
+
+            addDeleteButton(newRow); // Add delete button to the row
+        }
+
+        // Load data from local storage on page load
+        window.addEventListener("DOMContentLoaded", function () {
+            loadData();
+        });
+
+        function addRow() {
+            var table = document.getElementById("data-table");
+            var newRow = table.insertRow(table.rows.length);
+
+            var dataInput = prompt("Enter the data (use '/' or space as a separator):");
+            var dataArr = dataInput.split(/[\/\s]+/);
+
+            for (var i = 0; i < dataArr.length; i++) {
+                var cell = newRow.insertCell(i);
+                var data = dataArr[i];
+
+                var contentEditableSpan = document.createElement("span");
+                contentEditableSpan.contentEditable = true;
+                contentEditableSpan.innerHTML = data;
+
+                cell.appendChild(contentEditableSpan);
+                updateStars(contentEditableSpan);
+            }
+
+            addDeleteButton(newRow);
+            saveData();
+        }
+
+        function addDeleteButton(row) {
+            var deleteCell = row.insertCell(row.cells.length);
+
+            var deleteButton = document.createElement("button");
+            deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+            deleteButton.classList.add("delete-button");
+            deleteButton.addEventListener("click", function() {
+                deleteRow(row);
+            });
+
+            deleteCell.appendChild(deleteButton);
+        }
+
+        function deleteRow(row) {
+            var table = document.getElementById("data-table");
+            var rowIndex = row.rowIndex;
+            table.deleteRow(rowIndex);
+            saveData();
+        }
+
+        document.addEventListener("input", function (event) {
+            var target = event.target;
+            if (target.tagName.toLowerCase() === "span") {
+                updateStars(target);
+                saveData();
+            }
+        });
+
+        function updateStars(span) {
+            var newData = span.innerHTML;
+            var starsContainer = span.parentNode.querySelector(".stars-container");
+
+            if (starsContainer) {
+                span.parentNode.removeChild(starsContainer);
+            }
+
+            if (newData.includes('*')) {
+                var asterisks = newData.split('*');
+                var starCount = asterisks.length - 1;
+                starsContainer = document.createElement("div");
+                starsContainer.classList.add("stars-container");
+
+                var starRow = document.createElement("div");
+                starRow.classList.add("star-row");
+
+                for (var j = 0; j < starCount; j++) {
+                    if (j % 3 === 0 && j !== 0) {
+                        starsContainer.appendChild(starRow);
+                        starRow = document.createElement("div");
+                        starRow.classList.add("star-row");
+                    }
+
+                    var star = document.createElement("i");
+                    star.classList.add("fas", "fa-star", "star");
+                    starRow.appendChild(star);
+                }
+
+                starsContainer.appendChild(starRow);
+                span.parentNode.appendChild(starsContainer);
+            }
+        }
+
+        function saveData() {
+            var tableData = [];
+
+            var table = document.getElementById("data-table");
+            var rows = table.getElementsByTagName("tr");
+
+            for (var i = 0; i < rows.length; i++) {
+                var cells = rows[i].getElementsByTagName("td");
+                var rowData = [];
+
+                for (var j = 0; j < cells.length - 1; j++) {
+                    var cellData = cells[j].querySelector("span").innerHTML;
+                    rowData.push(cellData);
+                }
+
+                tableData.push(rowData.join("/"));
+            }
+
+            localStorage.setItem("tableData", JSON.stringify(tableData));
+        }
+
+        function loadData() {
+            var tableData = localStorage.getItem("tableData");
+            if (tableData) {
+                tableData = JSON.parse(tableData);
+
+                var table = document.getElementById("data-table");
+
+                for (var i = 0; i < tableData.length; i++) {
+                    var newRow = table.insertRow(table.rows.length);
+                    var rowData = tableData[i].split("/");
+
+                    for (var j = 0; j < rowData.length; j++) {
+                        var cell = newRow.insertCell(j);
+                        var data = rowData[j];
+
+                        var contentEditableSpan = document.createElement("span");
+                        contentEditableSpan.contentEditable = true;
+                        contentEditableSpan.innerHTML = data;
+
+                        cell.appendChild(contentEditableSpan);
+                        updateStars(contentEditableSpan);
+                    }
+
+                    addDeleteButton(newRow);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
