@@ -9,12 +9,7 @@
             background-color: #000;
             color: #fff;
             text-shadow: 0px 0px 10px rgba(255, 255, 255, 0.567);
-            display: flex;
             font-family: 'Montserrat', Arial, sans-serif;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: nowrap;
         }
 
         table {
@@ -22,14 +17,12 @@
             border: 3px solid yellow;
             width: 100%;
             box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.243);
-
         }
 
         th, td {
             padding: 8px;
-            text-align: left;
-            border: 1px solid black;
             text-align: center;
+            border: 1px solid black;
             vertical-align: middle;
         }
 
@@ -59,6 +52,9 @@
 
         .stars-container {
             margin-top: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .star-row {
@@ -68,25 +64,12 @@
 
         .star {
             color: #ffce00;
-    
             margin-right: 4px;
             font-size: 12px;
         }
 
-        .stars-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        span {
-            padding: 10px;
-            position: sticky;
-        }
-
         tr {
             border: 2px solid #ffce00;
-
         }
 
         td {
@@ -102,33 +85,41 @@
             font-size: 12px;
             cursor: pointer;
         }
+
         #shortcuts {
-    display: flex;
-    position: absolute;
-    background-color: #131313;
-    top: 10px;
-    padding: 5px;
-    border-radius: 5px;
-    font-size: x-small;
-    right: 0;
-    flex-direction: column;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            background-color: #131313;
+            padding: 5px;
+            border-radius: 5px;
+            font-size: x-small;
+            transition: .2s ease-in-out;
+            z-index: 9999;
+        }
+
+        #shortcuts:hover {
+            transform: scale(1.05);
+        }
+        .damnRow{
+            display: flex;
+    align-items: center;
     justify-content: center;
-    align-items: flex-start;
-    transition: .2s ease-in-out;
-}
-#shortcuts:hover{
-    transform: scale(1.05);
-}
+    width: 100%;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
     <div id="shortcuts">
-        SHORTCUT KEYS
-        <label for="">CTRL + SHIFT = Adds empty row </label>
-        <label for="">CTRL + U = row for 'Upside' </label>
-        <label for="">CTRL + D = row for 'Downside' </label>
-
+        <div>SHORTCUT KEYS</div>
+        <div>CTRL + SHIFT = Adds empty row</div>
+        <div>CTRL + U = row for 'Upside'</div>
+        <div>CTRL + D = row for 'Downside'</div>
     </div>
     <table id="data-table">
         <thead>
@@ -137,81 +128,12 @@
                 <th>Action</th>
             </tr>
         </thead>
-        <tbody>
-        </tbody>
+        <tbody></tbody>
     </table>
+    <div class="damnRow">
     <button onclick="addRow()" class="button">Add Row</button>
-
+</div>
     <script>
-   // Add Row function
-   function addRow() {
-            var table = document.getElementById("data-table");
-            var newRow = table.insertRow(table.rows.length);
-
-            var dataInput = prompt("Enter the data (use '/' or space as a separator):");
-            var dataArr = dataInput.split(/[\/\s]+/);
-
-            for (var i = 0; i < dataArr.length; i++) {
-                var cell = newRow.insertCell(i);
-                var data = dataArr[i];
-
-                var contentEditableSpan = document.createElement("span");
-                contentEditableSpan.contentEditable = true;
-                contentEditableSpan.innerHTML = data;
-
-                cell.appendChild(contentEditableSpan);
-                updateStars(contentEditableSpan);
-            }
-
-            addDeleteButton(newRow); // Add delete button to the row
-        }
-
-        // Shortcut key handler
-  // Shortcut key handler
-  document.addEventListener("keydown", function(event) {
-             if (event.ctrlKey && event.shiftKey) {
-                event.preventDefault(); // Prevent default browser behavior
-
-                addRow(); // Call the addRow function
-            }
-            if (event.ctrlKey && event.key === "u") {
-                event.preventDefault(); // Prevent default browser behavior
-
-                addSpecificRow("UP: ", "*"); // Call addSpecificRow with "UP: " and "*" as parameters
-            } else if (event.ctrlKey && event.key === "d") {
-                event.preventDefault(); // Prevent default browser behavior
-
-                addSpecificRow("DOWN: ", "*"); // Call addSpecificRow with "DOWN: " and "*" as parameters
-            }
-        });
-
-        // Function to add specific row
-        function addSpecificRow(header, cellData) {
-            var table = document.getElementById("data-table");
-            var newRow = table.insertRow(table.rows.length);
-
-            var headerCell = newRow.insertCell(0);
-            headerCell.innerHTML = header;
-
-            for (var i = 0; i < 5; i++) {
-                var cell = newRow.insertCell(i + 1);
-
-                var contentEditableSpan = document.createElement("span");
-                contentEditableSpan.contentEditable = true;
-                contentEditableSpan.innerHTML = cellData;
-
-                cell.appendChild(contentEditableSpan);
-                updateStars(contentEditableSpan);
-            }
-
-            addDeleteButton(newRow); // Add delete button to the row
-        }
-
-        // Load data from local storage on page load
-        window.addEventListener("DOMContentLoaded", function () {
-            loadData();
-        });
-
         function addRow() {
             var table = document.getElementById("data-table");
             var newRow = table.insertRow(table.rows.length);
@@ -235,6 +157,45 @@
             saveData();
         }
 
+        document.addEventListener("keydown", function(event) {
+            if (event.ctrlKey && event.shiftKey) {
+                event.preventDefault();
+                addRow();
+            } else if (event.ctrlKey && event.key === "u") {
+                event.preventDefault();
+                addSpecificRow("UP: ", "*");
+            } else if (event.ctrlKey && event.key === "d") {
+                event.preventDefault();
+                addSpecificRow("DOWN: ", "*");
+            }
+        });
+
+        function addSpecificRow(header, cellData) {
+            var table = document.getElementById("data-table");
+            var newRow = table.insertRow(table.rows.length);
+
+            var headerCell = newRow.insertCell(0);
+            headerCell.innerHTML = header;
+
+            for (var i = 0; i < 5; i++) {
+                var cell = newRow.insertCell(i + 1);
+
+                var contentEditableSpan = document.createElement("span");
+                contentEditableSpan.contentEditable = true;
+                contentEditableSpan.innerHTML = cellData;
+
+                cell.appendChild(contentEditableSpan);
+                updateStars(contentEditableSpan);
+            }
+
+            addDeleteButton(newRow);
+            saveData();
+        }
+
+        window.addEventListener("DOMContentLoaded", function() {
+            loadData();
+        });
+
         function addDeleteButton(row) {
             var deleteCell = row.insertCell(row.cells.length);
 
@@ -255,7 +216,7 @@
             saveData();
         }
 
-        document.addEventListener("input", function (event) {
+        document.addEventListener("input", function(event) {
             var target = event.target;
             if (target.tagName.toLowerCase() === "span") {
                 updateStars(target);
@@ -299,7 +260,6 @@
 
         function saveData() {
             var tableData = [];
-
             var table = document.getElementById("data-table");
             var rows = table.getElementsByTagName("tr");
 
